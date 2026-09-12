@@ -1,12 +1,15 @@
 <h1>Tickets</h1>
+
 @if (session('success'))
-    <p>
-        {{ session('success') }}
-    </p>
+    <p>{{ session('success') }}</p>
 @endif
-<a href="{{ route('tickets.create') }}">
-    Nuevo Ticket
-</a>
+
+@can('crear tickets')
+    {{ route('tickets.create') }}
+        Nuevo Ticket
+    </a>
+@endcan
+
 <table>
     <thead>
         <tr>
@@ -20,29 +23,31 @@
     <tbody>
         @foreach ($tickets as $ticket)
             <tr>
+                <td>{{ $ticket->id }}</td>
+
+                <td>{{ $ticket->titulo }}</td>
+
+                <td>{{ $ticket->user->name ?? 'Sin usuario' }}</td>
+
+                <td>{{ $ticket->estado }}</td>
+
                 <td>
-                    {{ $ticket->id }}
-                </td>
-                <td>
-                    {{ $ticket->titulo }}
-                </td>
-                <td></td>
-                {{ $ticket->user->name }}
-                </td>
-                <td>
-                    {{ $ticket->estado }}
-                </td>
-                <td>
-                    <a href="{{ route('tickets.show', $ticket) }}">
-                        Ver
-                    </a>
-                    <a href="{{ route('tickets.edit', $ticket) }}">
-                        Editar
-                    </a>
+                    @can('ver tickets')
+                            Ver
+                        </a>
+                    @endcan
+
+                    @can('editar tickets')
+                            Editar
+                        </a>
+                    @endcan
+
                     @if ($ticket->estado === 'abierto')
-                        <form method="POST" action="{{ route('tickets.cerrar', $ticket) }}" @csrf @method('PATCH')
+                            @csrf
+                            @method('PATCH')
+
                             <button type="submit">
-                            Cerrar
+                                Cerrar
                             </button>
                         </form>
                     @endif
