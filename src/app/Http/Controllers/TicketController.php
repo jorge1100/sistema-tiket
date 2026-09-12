@@ -10,6 +10,10 @@ class TicketController extends Controller
 {
     public function index()
     {
+        abort_unless(
+            auth()->user()->can('ver tickets'),
+            403
+        );
         $tickets = Ticket::with('user')
             ->latest()
             ->get();
@@ -57,6 +61,10 @@ class TicketController extends Controller
     }
     public function edit(Ticket $ticket)
     {
+        abort_unless(
+            auth()->user()->can('editar tickets'),
+            403
+        );
         return view(
             'tickets.edit',
             compact('ticket')
@@ -66,6 +74,11 @@ class TicketController extends Controller
         Request $request,
         Ticket $ticket
     ) {
+
+    abort_unless(
+            auth()->user()->can('editar tickets'),
+            403
+        );
         $datos = $request->validate([
             'titulo' => [
                 'required',
@@ -87,6 +100,10 @@ class TicketController extends Controller
     }
     public function cerrar(Ticket $ticket)
     {
+        abort_unless(
+            auth()->user()->can('cerrar tickets'),
+            403
+        );
         $ticket->update([
             'estado' => 'cerrado'
         ]);
